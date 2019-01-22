@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+</head>
+
+<body>
+  <span style="display:inline">
+    <ul id="messages">
+      <label for="">maingroup</label>:
+    </ul>
+    <ul id="messages1">
+      <label for="">group2 </label>:
+    </ul>
+    <ul id="messages2">
+      <label for="">group2 </label>:
+    </ul>
+  </span>
+  <form action="">
+    <input id="m" placeholder="main room" autocomplete="off" />
+    <input id="m1" placeholder="group1" autocomplete="off" />
+    <input id="m2" placeholder="group2" autocomplete="off" />
+    <button>Send</button>
+  </form>
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    var socket = io('/')
+    var socket1 = io('/group1')
+    var socket2 = io('/group2');
+    (() => {
+      socket.on('chatMessage', function (msg) {
+        console.log(msg);
+        $('#messages').append($('<li>').text(msg));
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket1.on('chatMessage', function (msg) {
+        console.log(msg);
+        $('#messages1').append($('<li>').text(msg));
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket2.on('chatMessage', function (msg) {
+        $('#messages2').append($('<li>').text(msg));
+        console.log(msg);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+    })();
+    $(function () {
+      $('form').submit(function () {
+        const mainRoom = document.getElementById('m').value;
+        const group1 = document.getElementById('m1').value;
+        const group2 = document.getElementById('m2').value;
+        if (mainRoom) socket.emit('chatMessage', mainRoom);
+        if (group1) socket1.emit('chatMessage', group1);
+        if (group2) socket2.emit('chatMessage', group2);
+        return false;
+      });
+    });
+  </script>
+</body>
+</html>
